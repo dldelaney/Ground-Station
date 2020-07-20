@@ -1,0 +1,23 @@
+﻿updated 7-14-20 1830
+5 PIDs
+4 radio channels (pitch/roll/throttle/yaw (reserved but not used))
+plane vertical speed
+plane altitide
+plane pitch/roll
+plane speed
+plane heading
+lat/lng
+
+Computer send
+	-PIDs (only the selected one)(send in button hit function) (DONE)
+	-radio channels
+	-button commands (send in button hit function) 
+
+Arduino(RF24 --> Serial) send
+	-plane vertical speed
+	-plane altitide
+	-plane pitch/roll
+	-plane speed
+	-plane heading
+	-plane lat/lng (to be stored in file / mapped on GMaps)
+	

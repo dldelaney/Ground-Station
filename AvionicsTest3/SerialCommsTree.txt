@@ -1,0 +1,64 @@
+﻿FOR REFERENCE - UPDATED 7-15-20  2027
+
+checksum removed, will slow down data transfer (5-6 extra chars per data transfer, with each bit of actual data being around 7 chars)
+checksum will be included for RF24 comms, as that is prone to losing data
+//checksum example ->  ~msg[num]
+//where num is the sum of all the ACII values of the chars in the message
+
+first char of message:
+C - command
+	R - return home
+	L - autoland (line up with runway)
+	M - manual override (see next char) (should be activated whenever joystick moves past certain amount past center)
+		R - roll
+		P - pitch
+		T - throttle
+	A - autopilot (see next char)
+		S - speed
+		P - pitch
+		A - altitude
+		B - bank
+		H - heading
+			(All: see next char)
+			1 - enable
+			0 - disable
+	P - PID setting (see next char)
+		A - altitude
+		P - pitch
+		B - bank
+		S - speed
+		H - heading
+		R - runway lineup
+			(All: see next char)
+			p - P setting
+			i - I setting
+			d - D setting
+			1 - enable
+			0 - disable
+	Z - zero values (see next char) (set offsets)
+		B - barometer
+		-either no number here, or a 1 to set the offset and a 0 to remove it
+		
+D - data (see second char)
+	S - speed
+	G - gyro (see third char)
+		x, y, z
+	L - location (lat/lng) (see third char)
+		a - lat
+		n - lng
+	A - altitude
+	H - heading
+	V - vertical speed
+	---the rest of the command will be a single number---
+
+
+keep sending until recieved ack message or timed out (5s?)
+
+if no next char read in 200ms, or if ~ character (start of message) recieved, dump the current attempt
+
+if "critical" msg (autopilot, returnHome, etc.) don't send next msg until recieved ack msg
+-ack msg is correct checksum of previous msg
+
+
+
+
