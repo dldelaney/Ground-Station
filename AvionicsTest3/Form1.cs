@@ -26,8 +26,8 @@ namespace AvionicsTest3
         SerialPort serialPort = new SerialPort();
         float[,] PIDs = new float[6,3];
         bool[] joystickButtons = new bool[12];
-        float[] joystickAxis = new float[3];
-        string cmdSavedPath = "";
+        float[] joystickAxis = new float[3];// a percentage between 0 and 1 related to how much the joystick has moved in that axis
+        string serialReadSave = "";
         const int generalBufferSize = 10;
         const int insturmentSideBufferSize = 5;
         const int insturmentTopBufferSize = 5;
@@ -61,7 +61,7 @@ namespace AvionicsTest3
             timer.Start();
         }
         private void loopDeLoop(object sender, EventArgs e) {
-
+            
             updateJoystickValues();
             compileSerialData();
             readDataFromSerial();
@@ -473,32 +473,65 @@ namespace AvionicsTest3
         private void compileSerialData() {
             //checksum unneeded for serial connection, needed for RF24 comms
             //send radio channels
-            if (serialPort.IsOpen) {
+
                 if (planeState == "manualControl")
                 {
-                    string str = "CM";
-                    string strSave = str;
-                    str += "R";
-                    str += (float)joystickAxis[0];// x axis
-                    str += strSave;
-                    str += "P";
-                    str += (float)joystickAxis[1];// y axis
-                    str += strSave;
-                    str += "T";
+                    string str = "CMR";// command, manual control, roll
+                    str += (float)joystickAxis[0];// x-axis
+                    checksumAndSendToSerial(str);
+                    str = "CMP";// command, manual control, pitch
+                    str += (float)joystickAxis[1];// y-axis
+                    checksumAndSendToSerial(str);
+                    str = "CMT";//command, manual control, throttle
                     str += (float)joystickAxis[2];// throttle
                     checksumAndSendToSerial(str);
                 }
                 else if (planeState == "") { 
                     
                 }
-            }
-            else
-            {
-                Console.WriteLine("ERR - Serial port closed-C");
-            }
         }
         private void readDataFromSerial() {
+            if (serialPort.IsOpen)
+            {
+                //read until found '~'
+                char c = (char)serialPort.ReadChar();
+                string str = "";
+                if (c == '~') {
+                    while(serialPort.BytesToRead > 0)
+                    {
+                        c = (char)serialPort.ReadChar();
+                        str += c; // save char to string
+                        if (c == ']')// read until found ']' (indicating end of message)
+                        {// check checksum
+                            int msgStart = str.IndexOf('~');
+                            int numStart = str.IndexOf('[');
+                            int msgEnd = str.IndexOf(']');
+                            string msg = str.Substring(msgStart + 1, numStart - msgStart - 1);
+                            int msgTotal = Int16.Parse(str.Substring(numStart + 1, msgEnd - numStart - 1));
+                            int calculatedTotal = 0;
+                            for (int i = 0; i < msg.Length; i++) {
+                                calculatedTotal = (byte)msg[i];
+                            }
+                            if (calculatedTotal == msgTotal) {
+                                //if correct, send to insturment panel and write data to file
+                            }
+                            else
+                            {
+                                //if incorrect, write to different file and don't send to insturments (light up indicator for incorrect checksums)
+                            }
 
+
+                        }
+                        
+                        // if no more bytes, save message and return
+                    }
+                    
+
+                }
+            }
+            
+            
+            
 
         }
         private void altimeterInstrumentControl1_Click(object sender, EventArgs e)
@@ -507,13 +540,27 @@ namespace AvionicsTest3
             altApLabel.BackColor = Color.Green;
         }
         private void checksumAndSendToSerial(string msg) {
+            //fill remainder of chars with ] until 30 chars total
             string str = "~";
-            
+            str += msg;
+            int total = 0;
+            for(int i = 0; i < msg.Length; i++) {
+                total += (byte)msg[i];
+            }
+            msg += "[";
+            msg += total.ToString();
+            msg += "]";
+            for(int i = msg.Length; i < 30; i++)
+            {
+                //add ']'s until at 30 chars
+                msg += "]";
+            }
+            if (serialPort.IsOpen)
+            {
+                serialPort.Write(msg);
+            }
         }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-
-        }
+     
+        
     }
 }

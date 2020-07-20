@@ -1,9 +1,8 @@
-﻿FOR REFERENCE - UPDATED 7-15-20  2027
+﻿UPDATED 7-20-20 1130
 
-checksum removed, will slow down data transfer (5-6 extra chars per data transfer, with each bit of actual data being around 7 chars)
-checksum will be included for RF24 comms, as that is prone to losing data
-//checksum example ->  ~msg[num]
-//where num is the sum of all the ACII values of the chars in the message
+checksum around each individual command (no more than 1 command in a message)
+checksum example ->  ~msg[num]
+where num is the sum of all the ACII values of the chars in the message
 
 first char of message:
 C - command
@@ -50,11 +49,6 @@ D - data (see second char)
 	H - heading
 	V - vertical speed
 	---the rest of the command will be a single number---
-
-
-keep sending until recieved ack message or timed out (5s?)
-
-if no next char read in 200ms, or if ~ character (start of message) recieved, dump the current attempt
 
 if "critical" msg (autopilot, returnHome, etc.) don't send next msg until recieved ack msg
 -ack msg is correct checksum of previous msg
