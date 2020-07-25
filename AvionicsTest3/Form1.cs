@@ -18,7 +18,7 @@ using SharpDX.DirectInput;
 namespace AvionicsTest3
 {
     public partial class AirspeedDisplay : Form // using avionics insturments from https://www.codeproject.com/Articles/27411/C-Avionic-Instrument-Controls
-    {//this comment is for a github test
+    {
         DirectInput directInput = new DirectInput();
         Guid joystickGuid = Guid.Empty;
         Joystick joystick;
@@ -471,8 +471,6 @@ namespace AvionicsTest3
             joystickInit();
         }
         private void compileSerialDataToSend() {
-            //checksum unneeded for serial connection, needed for RF24 comms
-            //send radio channels
 
                 if (planeState == "manualControl")
                 {
@@ -533,7 +531,7 @@ namespace AvionicsTest3
                                     headingIndicatorInstrumentControl1.SetHeadingIndicatorParameters(Int16.Parse(msg.Substring(2)));// TODO: when updated insturment pictures, parse to float, multiply by factor, cast to int
                                     break;
                                 case 'V':
-                                    verticalSpeedIndicatorInstrumentControl1.SetVerticalSpeedIndicatorParameters(Int16.Parse(msg.Substring(2)));
+                                    verticalSpeedIndicatorInstrumentControl1.SetVerticalSpeedIndicatorParameters(Int16.Parse(msg.Substring(2)));// TODO: when updated insturment pictures, parse to float, multiply by factor, cast to int
                                     break;
                             }
                         }
@@ -546,8 +544,9 @@ namespace AvionicsTest3
                     }
                     else
                     {
-                    //if incorrect, write to different file and don't send to insturments (light up indicator for incorrect checksums)
-                    writeToFile(msg, "incorrectData.txt");
+                        //if incorrect, write to different file and don't send to insturments (light up indicator for incorrect checksums)
+                        writeToFile(msg, "incorrectData.txt");
+                        // TODO: light up indicator for incorrect checksum
                     }
 
                     serialReadSave = serialReadSave.Substring(msgEnd + 1);
@@ -589,7 +588,7 @@ namespace AvionicsTest3
         private void writeToFile(string msg, string filename) {
             using (StreamWriter file = new StreamWriter(filename, true))
             {
-                file.Write(DateTime.Now);
+                file.Write(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());// millis since epoch (midnight Jan 1, 1970)
                 file.Write(",");
                 file.WriteLine(msg);
             }
