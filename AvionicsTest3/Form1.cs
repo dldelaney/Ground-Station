@@ -49,7 +49,7 @@ namespace AvionicsTest3
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-            joystickInit();//
+            joystickInit();
 
             drawWindowInit();
             initSerialPorts();
@@ -63,7 +63,7 @@ namespace AvionicsTest3
         private void loopDeLoop(object sender, EventArgs e) {
             
             updateJoystickValues();
-            compileSerialData();
+            compileSerialDataToSend();
             readDataFromSerial();
 
         }
@@ -470,7 +470,7 @@ namespace AvionicsTest3
         {
             joystickInit();
         }
-        private void compileSerialData() {
+        private void compileSerialDataToSend() {
             //checksum unneeded for serial connection, needed for RF24 comms
             //send radio channels
 
@@ -512,7 +512,7 @@ namespace AvionicsTest3
                     if (calculatedTotal == msgTotal)
                     {
                         //if correct, send to insturment panel and write data to file
-                        if (msg[0] == 'D')
+                        if (msg[0] == 'D')// this isn't a switch statement only because individual items in a switch statement can't be collapsed
                         {
                             switch (msg[1])
                             {
