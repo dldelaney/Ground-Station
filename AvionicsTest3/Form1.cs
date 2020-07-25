@@ -493,41 +493,67 @@ namespace AvionicsTest3
         private void readDataFromSerial() {
             if (serialPort.IsOpen)
             {
-                //read until found '~'
-                char c = (char)serialPort.ReadChar();
-                string str = "";
-                if (c == '~') {
-                    while(serialPort.BytesToRead > 0)
-                    {
-                        c = (char)serialPort.ReadChar();
-                        str += c; // save char to string
-                        if (c == ']')// read until found ']' (indicating end of message)
-                        {// check checksum
-                            int msgStart = str.IndexOf('~');
-                            int numStart = str.IndexOf('[');
-                            int msgEnd = str.IndexOf(']');
-                            string msg = str.Substring(msgStart + 1, numStart - msgStart - 1);
-                            int msgTotal = Int16.Parse(str.Substring(numStart + 1, msgEnd - numStart - 1));
-                            int calculatedTotal = 0;
-                            for (int i = 0; i < msg.Length; i++) {
-                                calculatedTotal = (byte)msg[i];
-                            }
-                            if (calculatedTotal == msgTotal) {
-                                //if correct, send to insturment panel and write data to file
-                            }
-                            else
-                            {
-                                //if incorrect, write to different file and don't send to insturments (light up indicator for incorrect checksums)
-                            }
+                while (serialPort.BytesToRead > 0) {
+                    serialReadSave += (char)serialPort.ReadChar();
+                }
 
+                while (serialReadSave.IndexOf('~') > -1 && serialReadSave.IndexOf(']') > -1)// while loop so we can parse multiple messages in one function call
+                {// check checksum
+                    int msgStart = serialReadSave.IndexOf('~');
+                    int numStart = serialReadSave.IndexOf('[');
+                    int msgEnd = serialReadSave.IndexOf(']');
+                    string msg = serialReadSave.Substring(msgStart + 1, numStart - msgStart - 1);
+                    int msgTotal = Int16.Parse(serialReadSave.Substring(numStart + 1, msgEnd - numStart - 1));
+                    int calculatedTotal = 0;
+                    for (int i = 0; i < msg.Length; i++)
+                    {
+                        calculatedTotal = (byte)msg[i];
+                    }
+                    if (calculatedTotal == msgTotal)
+                    {
+                        //if correct, send to insturment panel and write data to file
+                        if (msg[0] == 'D')
+                        {
+                            switch (msg[1])
+                            {
+                                case 'S':
+                                    airSpeedIndicatorInstrumentControl1.SetAirSpeedIndicatorParameters(Int16.Parse(msg.Substring(2)));// TODO: when updated insturment pictures, parse to float, multiply by factor, cast to int
+                                    break;
+                                case 'G':
+                                    // TODO: parse data and set insturment
+                                    break;
+                                case 'L':
+                                    // TODO: send to file
+                                    // Feature? - add GMaps to screen to show location in real time
+                                    break;
+                                case 'A':
+                                    altimeterInstrumentControl1.SetAlimeterParameters(Int16.Parse(msg.Substring(2)));// TODO: when updated insturment pictures, parse to float, multiply by factor, cast to int
+                                    break;
+                                case 'H':
+                                    headingIndicatorInstrumentControl1.SetHeadingIndicatorParameters(Int16.Parse(msg.Substring(2)));// TODO: when updated insturment pictures, parse to float, multiply by factor, cast to int
+                                    break;
+                                case 'V':
+                                    verticalSpeedIndicatorInstrumentControl1.SetVerticalSpeedIndicatorParameters(Int16.Parse(msg.Substring(2)));
+                                    break;
+                            }
+                        }
+                        else if (msg[0] == 'A')
+                        {
 
                         }
-                        
-                        // if no more bytes, save message and return
-                    }
-                    
+                        writeToFile(msg, "correctData.txt");
 
+                    }
+                    else
+                    {
+                    //if incorrect, write to different file and don't send to insturments (light up indicator for incorrect checksums)
+                    writeToFile(msg, "incorrectData.txt");
+                    }
+
+                    serialReadSave = serialReadSave.Substring(msgEnd + 1);
                 }
+                        
+                    // if no more bytes, save message and return
             }
             
             
@@ -560,7 +586,14 @@ namespace AvionicsTest3
                 serialPort.Write(msg);
             }
         }
-     
+        private void writeToFile(string msg, string filename) {
+            using (StreamWriter file = new StreamWriter(filename, true))
+            {
+                file.Write(DateTime.Now);
+                file.Write(",");
+                file.WriteLine(msg);
+            }
+        }
         
     }
 }

@@ -1,9 +1,10 @@
-﻿UPDATED 7-20-20 1130
+﻿UPDATED 7-24-20 2100
 
 checksum around each individual command (no more than 1 command in a message)
 checksum example ->  ~msg[num]
 where num is the sum of all the ACII values of the chars in the message
 
+DATA TO PLANE
 first char of message:
 C - command
 	R - return home
@@ -37,7 +38,8 @@ C - command
 	Z - zero values (see next char) (set offsets)
 		B - barometer
 		-either no number here, or a 1 to set the offset and a 0 to remove it
-		
+
+DATA FROM PLANE
 D - data (see second char)
 	S - speed
 	G - gyro (see third char)
@@ -48,10 +50,11 @@ D - data (see second char)
 	A - altitude
 	H - heading
 	V - vertical speed
-	---the rest of the command will be a single number---
+A - ack message
+	-do not send next command until get ack message from previous command
+	-(change color of command buttons to "command sent but ack not recieved" color)
 
-if "critical" msg (autopilot, returnHome, etc.) don't send next msg until recieved ack msg
--ack msg is correct checksum of previous msg
+---the rest of the command will be a single number---
 
 
 
