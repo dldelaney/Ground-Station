@@ -495,8 +495,9 @@ namespace AvionicsTest3
                     serialReadSave += (char)serialPort.ReadChar();
                 }
 
-                while (serialReadSave.IndexOf('~') > -1 && serialReadSave.IndexOf(']') > -1)// while loop so we can parse multiple messages in one function call
-                {// check checksum
+                while (serialReadSave.IndexOf('~') > -1 && serialReadSave.IndexOf(']') > -1)//if there is a message in the buffer
+                {// while loop so we can parse multiple messages in one function call
+                    // check checksum
                     int msgStart = serialReadSave.IndexOf('~');
                     int numStart = serialReadSave.IndexOf('[');
                     int msgEnd = serialReadSave.IndexOf(']');
@@ -549,7 +550,7 @@ namespace AvionicsTest3
                         // TODO: light up indicator for incorrect checksum
                     }
 
-                    serialReadSave = serialReadSave.Substring(msgEnd + 1);
+                    serialReadSave = serialReadSave.Substring(msgEnd + 1);//cut the message from the buffer
                 }
                         
                     // if no more bytes, save message and return

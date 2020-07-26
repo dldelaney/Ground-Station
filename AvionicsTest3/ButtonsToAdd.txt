@@ -1,0 +1,6 @@
+﻿Updated 7-25-20 2056
+
+Buttons to add:
+-Autoland
+-Return home (RTLS)
+-Emergency (oh sh*t) button (deploys chute) (bind to key command / # total buttons held?)

@@ -1,6 +1,6 @@
 ﻿updated 7-14-20 1830
 5 PIDs
-4 radio channels (pitch/roll/throttle/yaw (reserved but not used))
+4 radio channels (pitch/roll/throttle/yaw (yaw reserved but not used))
 plane vertical speed
 plane altitide
 plane pitch/roll

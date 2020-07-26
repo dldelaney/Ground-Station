@@ -236,6 +236,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ButtonsToAdd.txt" />
     <Content Include="SerialCommsTree.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
