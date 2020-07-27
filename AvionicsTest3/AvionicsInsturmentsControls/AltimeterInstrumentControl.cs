@@ -24,10 +24,11 @@ namespace AvionicsInstrumentControlDemo
         #region Fields
 
         // Parameters
-        int altitude; 
+        int altitude;
 
         // Images
-        Bitmap bmpCadran = new Bitmap(AvionicsInstrumentControlDemo.AvionicsInstrumentsControls.AvionicsInstrumentsControlsRessources.Altimeter_Background);
+        //AvionicsInstrumentControlDemo.AvionicsInstrumentsControls.AvionicsInstrumentsControlsRessources.Altimeter_Background
+        Bitmap bmpCadran = new Bitmap(@"Resources\Altimeter_Background.bmp");
         Bitmap bmpSmallNeedle = new Bitmap(AvionicsInstrumentControlDemo.AvionicsInstrumentsControls.AvionicsInstrumentsControlsRessources.SmallNeedleAltimeter);
         Bitmap bmpLongNeedle = new Bitmap(AvionicsInstrumentControlDemo.AvionicsInstrumentsControls.AvionicsInstrumentsControlsRessources.LongNeedleAltimeter);
         Bitmap bmpScroll = new Bitmap(AvionicsInstrumentControlDemo.AvionicsInstrumentsControls.AvionicsInstrumentsControlsRessources.Bandeau_Dérouleur);

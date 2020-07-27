@@ -53,7 +53,7 @@
             this.serialConnectButton = new System.Windows.Forms.Button();
             this.serialDisconnectButton = new System.Windows.Forms.Button();
             this.joystickAquireButton = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.insturmentTestButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.iBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dBox)).BeginInit();
@@ -278,21 +278,22 @@
             this.joystickAquireButton.UseVisualStyleBackColor = true;
             this.joystickAquireButton.Click += new System.EventHandler(this.aquireJoystickButton_Click);
             // 
-            // button1
+            // insturmentTestButton
             // 
-            this.button1.Location = new System.Drawing.Point(125, 530);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 27;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
+            this.insturmentTestButton.Location = new System.Drawing.Point(14, 501);
+            this.insturmentTestButton.Name = "insturmentTestButton";
+            this.insturmentTestButton.Size = new System.Drawing.Size(105, 23);
+            this.insturmentTestButton.TabIndex = 27;
+            this.insturmentTestButton.Text = "Test Insturments";
+            this.insturmentTestButton.UseVisualStyleBackColor = true;
+            this.insturmentTestButton.Click += new System.EventHandler(this.insturmentTestButton_Click);
             // 
             // AirspeedDisplay
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.SystemColors.ButtonShadow;
             this.ClientSize = new System.Drawing.Size(888, 562);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.insturmentTestButton);
             this.Controls.Add(this.joystickAquireButton);
             this.Controls.Add(this.serialDisconnectButton);
             this.Controls.Add(this.serialConnectButton);
@@ -358,7 +359,7 @@
         private System.Windows.Forms.Button serialConnectButton;
         private System.Windows.Forms.Button serialDisconnectButton;
         private System.Windows.Forms.Button joystickAquireButton;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button insturmentTestButton;
     }
 }
 

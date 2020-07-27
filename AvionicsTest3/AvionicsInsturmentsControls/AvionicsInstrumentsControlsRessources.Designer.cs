@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AvionicsTest3.Properties {
+namespace AvionicsTest3.AvionicsInsturmentsControls {
     using System;
     
     
@@ -22,24 +22,24 @@ namespace AvionicsTest3.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class AvionicsInstrumentsControlsRessources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources() {
+        internal AvionicsInstrumentsControlsRessources() {
         }
         
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AvionicsTest3.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AvionicsTest3.AvionicsInsturmentsControls.AvionicsInstrumentsControlsRessources", typeof(AvionicsInstrumentsControlsRessources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,19 +51,20 @@ namespace AvionicsTest3.Properties {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
             set {
                 resourceCulture = value;
             }
+            
         }
         
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap AirSpeedIndicator_Background {
+        public static System.Drawing.Bitmap AirSpeedIndicator_Background {
             get {
                 object obj = ResourceManager.GetObject("AirSpeedIndicator_Background", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -73,7 +74,7 @@ namespace AvionicsTest3.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap AirSpeedNeedle {
+        public static System.Drawing.Bitmap AirSpeedNeedle {
             get {
                 object obj = ResourceManager.GetObject("AirSpeedNeedle", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -83,7 +84,7 @@ namespace AvionicsTest3.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Altimeter_Background {
+        public static System.Drawing.Bitmap Altimeter_Background {
             get {
                 object obj = ResourceManager.GetObject("Altimeter_Background", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -93,7 +94,7 @@ namespace AvionicsTest3.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Bandeau_Dérouleur {
+        public static System.Drawing.Bitmap Bandeau_Dérouleur {
             get {
                 object obj = ResourceManager.GetObject("Bandeau_Dérouleur", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -103,7 +104,7 @@ namespace AvionicsTest3.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap HeadingIndicator_Aircraft {
+        public static System.Drawing.Bitmap HeadingIndicator_Aircraft {
             get {
                 object obj = ResourceManager.GetObject("HeadingIndicator_Aircraft", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -113,7 +114,7 @@ namespace AvionicsTest3.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap HeadingIndicator_Background {
+        public static System.Drawing.Bitmap HeadingIndicator_Background {
             get {
                 object obj = ResourceManager.GetObject("HeadingIndicator_Background", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -123,7 +124,7 @@ namespace AvionicsTest3.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap HeadingWeel {
+        public static System.Drawing.Bitmap HeadingWeel {
             get {
                 object obj = ResourceManager.GetObject("HeadingWeel", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -133,7 +134,7 @@ namespace AvionicsTest3.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Horizon_Background {
+        public static System.Drawing.Bitmap Horizon_Background {
             get {
                 object obj = ResourceManager.GetObject("Horizon_Background", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -143,7 +144,7 @@ namespace AvionicsTest3.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Horizon_GroundSky {
+        public static System.Drawing.Bitmap Horizon_GroundSky {
             get {
                 object obj = ResourceManager.GetObject("Horizon_GroundSky", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -153,7 +154,7 @@ namespace AvionicsTest3.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Indicator_Background {
+        public static System.Drawing.Bitmap Indicator_Background {
             get {
                 object obj = ResourceManager.GetObject("Indicator_Background", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -163,7 +164,7 @@ namespace AvionicsTest3.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap LongNeedleAltimeter {
+        public static System.Drawing.Bitmap LongNeedleAltimeter {
             get {
                 object obj = ResourceManager.GetObject("LongNeedleAltimeter", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -173,7 +174,7 @@ namespace AvionicsTest3.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Maquette_Avion {
+        public static System.Drawing.Bitmap Maquette_Avion {
             get {
                 object obj = ResourceManager.GetObject("Maquette_Avion", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -183,7 +184,7 @@ namespace AvionicsTest3.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap SmallNeedleAltimeter {
+        public static System.Drawing.Bitmap SmallNeedleAltimeter {
             get {
                 object obj = ResourceManager.GetObject("SmallNeedleAltimeter", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -193,7 +194,7 @@ namespace AvionicsTest3.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap TurnCoordinator_Background {
+        public static System.Drawing.Bitmap TurnCoordinator_Background {
             get {
                 object obj = ResourceManager.GetObject("TurnCoordinator_Background", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -203,7 +204,7 @@ namespace AvionicsTest3.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap TurnCoordinatorAircraft {
+        public static System.Drawing.Bitmap TurnCoordinatorAircraft {
             get {
                 object obj = ResourceManager.GetObject("TurnCoordinatorAircraft", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -213,7 +214,7 @@ namespace AvionicsTest3.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap TurnCoordinatorBall {
+        public static System.Drawing.Bitmap TurnCoordinatorBall {
             get {
                 object obj = ResourceManager.GetObject("TurnCoordinatorBall", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -223,7 +224,7 @@ namespace AvionicsTest3.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap TurnCoordinatorMarks {
+        public static System.Drawing.Bitmap TurnCoordinatorMarks {
             get {
                 object obj = ResourceManager.GetObject("TurnCoordinatorMarks", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -233,8 +234,9 @@ namespace AvionicsTest3.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap VerticalSpeedIndicator_Background {
+        public static System.Drawing.Bitmap VerticalSpeedIndicator_Background {
             get {
+                resourceCulture.ClearCachedData();
                 object obj = ResourceManager.GetObject("VerticalSpeedIndicator_Background", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
@@ -243,7 +245,7 @@ namespace AvionicsTest3.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap VerticalSpeedNeedle {
+        public static System.Drawing.Bitmap VerticalSpeedNeedle {
             get {
                 object obj = ResourceManager.GetObject("VerticalSpeedNeedle", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));

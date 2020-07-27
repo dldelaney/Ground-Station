@@ -357,16 +357,24 @@ namespace AvionicsTest3
                 serialDisconnectButton.Size = new Size((verticalSpeedIndicatorInstrumentControl1.Location.X + verticalSpeedIndicatorInstrumentControl1.Size.Width) - (dBox.Location.X + dBox.Size.Width + (2 * generalBufferSize)), dBox.Size.Height);
                 serialDisconnectButton.Font = new Font("Microsoft Sans Serif", buttonFont / 2);
             }
-            
-            //set the joystick connection button
-            joystickAquireButton.Size = new Size(verticalSpeedIndicatorInstrumentControl1.Size.Width/2, pBox.Height);
-            joystickAquireButton.Location = new Point(generalBufferSize, this.Size.Height - joystickAquireButton.Size.Height - generalBufferSize); 
-            joystickAquireButton.Font = new Font("Microsoft Sans Serif", aquireJoystickButtonFont);
+            //place the buttons on the bottom right
+            if (true)
+            {
+                //set the joystick connection button
+                joystickAquireButton.Size = new Size(verticalSpeedIndicatorInstrumentControl1.Size.Width / 2, pBox.Height);
+                joystickAquireButton.Location = new Point(generalBufferSize, this.Size.Height - joystickAquireButton.Size.Height - generalBufferSize);
+                joystickAquireButton.Font = new Font("Microsoft Sans Serif", aquireJoystickButtonFont);
 
-            //place the exit
-            quitButton.Height = 20;
-            quitButton.Width = 45;
-            quitButton.Location = new Point(this.Width - quitButton.Width, 0);
+                //place the insturment test button
+                insturmentTestButton.Size = joystickAquireButton.Size;
+                insturmentTestButton.Location = new Point(joystickAquireButton.Location.X, joystickAquireButton.Location.Y - joystickAquireButton.Size.Height - generalBufferSize);
+                insturmentTestButton.Font = new Font("Microsoft Sans Serif", aquireJoystickButtonFont);
+
+                //place the exit
+                quitButton.Height = 20;
+                quitButton.Width = 45;
+                quitButton.Location = new Point(this.Width - quitButton.Width, 0);
+            }
 
             //other/misc
             sendPidButton.Font = new Font("Microsoft Sans Serif", buttonFont*7/8);
@@ -594,6 +602,78 @@ namespace AvionicsTest3
                 file.WriteLine(msg);
             }
         }
-        
+        private void insturmentTestButton_Click(object sender, EventArgs e)
+        {
+            if (!serialPort.IsOpen)// only do this if there is no communication to/from the plane
+            {
+                const int verticalSpeedMax = 60;
+                const int altimiterMax = 1000;
+                const int bankMax = 90;
+                const int airSpeedMax = 800;
+                const int headingMax = 360;
+
+                for (int i = -verticalSpeedMax; i < verticalSpeedMax; i++)
+                {
+                    verticalSpeedInsturmentSet(i);
+                    delay(10);
+                }
+                verticalSpeedInsturmentSet(0);
+
+                for (int i = 0; i < altimiterMax; i+= 5)
+                {
+                    altimiterInsturmentSet(i);
+                    delay(5);
+                }
+                altimiterInsturmentSet(0);
+
+                for (int i = -bankMax; i < bankMax; i++)
+                {
+                    attitudeInsturmentSet(i, i);
+                    delay(20);
+                }
+                attitudeInsturmentSet(0, 0);
+
+                for (int i = 0; i < airSpeedMax; i += 10)
+                {
+                    airspeedInsturmentSet(i);
+                    delay(50);
+                }
+                airspeedInsturmentSet(0);
+
+                for (int i = 0; i < headingMax; i++)
+                {
+                    headingInsturmentSet(i);
+                    delay(5);
+                }
+                headingInsturmentSet(0);
+            }
+        }
+        private void verticalSpeedInsturmentSet(int verticalSpeed)
+        {
+            const int actualVerticalSpeedMax = 6000;
+            const int changedVerticalSpeedMax = 60;
+            const float verticalSpeedMultiplier = (float)actualVerticalSpeedMax / changedVerticalSpeedMax;
+            verticalSpeedIndicatorInstrumentControl1.SetVerticalSpeedIndicatorParameters((int)(verticalSpeed * verticalSpeedMultiplier));
+        }
+        private void altimiterInsturmentSet(int altitude)
+        {
+            const int actualAltitudeMax = 10000;
+            const int changedAltitudeMax = 1000;
+            const float altitudeMultiplier = (float)actualAltitudeMax / changedAltitudeMax;
+            altimeterInstrumentControl1.SetAlimeterParameters((int)(altitude * altitudeMultiplier));
+        }
+        private void attitudeInsturmentSet(int pitch, int roll)// not needed, but I didn't want to make functions for just two displays, that would be inconsistant
+        {
+            attitudeIndicatorInstrumentControl1.SetAttitudeIndicatorParameters(pitch, roll);
+        }
+        private void airspeedInsturmentSet(int airspeed)// not needed, but I didn't want to make functions for just two displays, that would be inconsistant
+        {
+            airSpeedIndicatorInstrumentControl1.SetAirSpeedIndicatorParameters(airspeed);
+        }
+        private void headingInsturmentSet(int heading)// not needed, but I didn't want to make functions for just two displays, that would be inconsistant
+        {
+            headingIndicatorInstrumentControl1.SetHeadingIndicatorParameters(heading);
+        }
     }
 }
+

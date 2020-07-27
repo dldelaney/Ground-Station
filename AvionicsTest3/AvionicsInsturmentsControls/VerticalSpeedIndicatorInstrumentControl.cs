@@ -27,7 +27,8 @@ namespace AvionicsInstrumentControlDemo
         int verticalSpeed; 
 
         // Images
-        Bitmap bmpCadran = new Bitmap(AvionicsInstrumentControlDemo.AvionicsInstrumentsControls.AvionicsInstrumentsControlsRessources.VerticalSpeedIndicator_Background);
+        
+        Bitmap bmpCadran = new Bitmap(@"Resources\VerticalSpeedIndicator_Background.bmp");// AvionicsInstrumentControlDemo.AvionicsInstrumentsControls.AvionicsInstrumentsControlsRessources.VerticalSpeedIndicator_Background
         Bitmap bmpNeedle = new Bitmap(AvionicsInstrumentControlDemo.AvionicsInstrumentsControls.AvionicsInstrumentsControlsRessources.VerticalSpeedNeedle);
 
         #endregion
