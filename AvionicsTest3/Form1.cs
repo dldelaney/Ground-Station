@@ -28,6 +28,9 @@ namespace AvionicsTest3
         bool[] joystickButtons = new bool[12];
         float[] joystickAxis = new float[3];// a percentage between 0 and 1 related to how much the joystick has moved in that axis
         string serialReadSave = "";
+        int attitudeInsturmentRollSave = 0;
+        int attitudeInsturmentPitchSave = 0;
+        int recentAckMessage = -1;
         const int generalBufferSize = 10;
         const int insturmentSideBufferSize = 5;
         const int insturmentTopBufferSize = 5;
@@ -55,6 +58,7 @@ namespace AvionicsTest3
             initSerialPorts();
             loadLastPIDs();
 
+
             Timer timer = new Timer();
             timer.Interval = (10); // 10ms
             timer.Tick += new EventHandler(loopDeLoop);
@@ -65,7 +69,6 @@ namespace AvionicsTest3
             updateJoystickValues();
             compileSerialDataToSend();
             readDataFromSerial();
-
         }
         public void delay(int millis)
         {
@@ -519,36 +522,70 @@ namespace AvionicsTest3
                     if (calculatedTotal == msgTotal)
                     {
                         //if correct, send to insturment panel and write data to file
-                        if (msg[0] == 'D')// this isn't a switch statement only because individual items in a switch statement can't be collapsed
+                        // this isn't a switch statement only because individual items in a switch statement can't be collapsed
+                        if (msg[0] == 'D')//Data from plane
                         {
                             switch (msg[1])
                             {
-                                case 'S':
-                                    airSpeedIndicatorInstrumentControl1.SetAirSpeedIndicatorParameters(Int16.Parse(msg.Substring(2)));// TODO: when updated insturment pictures, parse to float, multiply by factor, cast to int
+                                case 'S':// speed
+                                    airspeedInsturmentSet(Int16.Parse(msg.Substring(2)));// TODO: when updated insturment pictures, parse to float, multiply by factor, cast to int
                                     break;
-                                case 'G':
-                                    // TODO: parse data and set insturment
+                                case 'G':// gyro
+                                    switch (msg[2])
+                                    {   // NOTE - since we don't get lat/lng in at the same time, we can't map the plane's position very accuratly
+                                        // I am thinking about a way to fix this but for now it'll just have to be like that.
+                                        case 'x'://roll (subject to change) TODO: check this
+                                            attitudeInsturmentRollSave = Int16.Parse(msg.Substring(3));
+                                            attitudeInsturmentSet(attitudeInsturmentRollSave, attitudeInsturmentPitchSave);
+                                            break;
+                                        case 'y'://pitch (subject to change) TODO: check this
+                                            attitudeInsturmentPitchSave = Int16.Parse(msg.Substring(3));
+                                            attitudeInsturmentSet(attitudeInsturmentRollSave, attitudeInsturmentPitchSave);
+                                            break;
+                                        case 'z':
+                                            //writeToFile
+                                            writeToFile(msg.Substring(3), "YawSave.txt");
+                                            break;
+                                        default:// if it doesn't fit, sent it to a file for later review
+                                            writeToFile(msg, "UnparsableGyro.txt");
+                                            break;
+                                    }
                                     break;
                                 case 'L':
-                                    // TODO: send to file
+                                    switch (msg[2])
+                                    {
+                                        case 'a':
+                                            writeToFile(msg.Substring(3), "LatCords.txt");
+                                            break;
+                                        case 'n':
+                                            writeToFile(msg.Substring(3), "LonCords.txt");
+                                            break;
+                                        default:
+                                            writeToFile(msg, "UnparsableLatLng.txt");
+                                            break;
+                                    }
+
                                     // Feature? - add GMaps to screen to show location in real time
                                     break;
                                 case 'A':
-                                    altimeterInstrumentControl1.SetAlimeterParameters(Int16.Parse(msg.Substring(2)));// TODO: when updated insturment pictures, parse to float, multiply by factor, cast to int
+                                    altimiterInsturmentSet(Int16.Parse(msg.Substring(2)));// TODO: when updated insturment pictures, parse to float, multiply by factor, cast to int
                                     break;
                                 case 'H':
-                                    headingIndicatorInstrumentControl1.SetHeadingIndicatorParameters(Int16.Parse(msg.Substring(2)));// TODO: when updated insturment pictures, parse to float, multiply by factor, cast to int
+                                    headingInsturmentSet(Int16.Parse(msg.Substring(2)));// TODO: when updated insturment pictures, parse to float, multiply by factor, cast to int
                                     break;
                                 case 'V':
-                                    verticalSpeedIndicatorInstrumentControl1.SetVerticalSpeedIndicatorParameters(Int16.Parse(msg.Substring(2)));// TODO: when updated insturment pictures, parse to float, multiply by factor, cast to int
+                                    verticalSpeedInsturmentSet(Int16.Parse(msg.Substring(2)));// TODO: when updated insturment pictures, parse to float, multiply by factor, cast to int
                                     break;
                             }
                         }
                         else if (msg[0] == 'A')
                         {
-
+                            recentAckMessage = Int16.Parse(msg.Substring(1));
                         }
-                        writeToFile(msg, "correctData.txt");
+                        else {
+                            writeToFile(msg, "ReallyUnparsableData.txt");
+                        }
+                        writeToFile(msg, "CorrectData.txt");
 
                     }
                     else
@@ -557,11 +594,8 @@ namespace AvionicsTest3
                         writeToFile(msg, "incorrectData.txt");
                         // TODO: light up indicator for incorrect checksum
                     }
-
                     serialReadSave = serialReadSave.Substring(msgEnd + 1);//cut the message from the buffer
                 }
-                        
-                    // if no more bytes, save message and return
             }
             
             
@@ -674,6 +708,9 @@ namespace AvionicsTest3
         {
             headingIndicatorInstrumentControl1.SetHeadingIndicatorParameters(heading);
         }
+        
+
+
     }
 }
 

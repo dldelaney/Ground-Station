@@ -4,4 +4,3 @@ Buttons to add:
 -Autoland
 -Return home (RTLS)
 -Emergency (oh sh*t) button (deploys chute) (bind to key command / # total buttons held?)
--test insturments (move insturments through full range of movement)
