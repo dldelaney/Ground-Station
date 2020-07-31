@@ -66,8 +66,8 @@ namespace AvionicsTest3
         }
         private void loopDeLoop(object sender, EventArgs e) {
             
-            updateJoystickValues();
-            compileSerialDataToSend();
+            //updateJoystickValues();
+            //compileSerialDataToSend();
             readDataFromSerial();
         }
         public void delay(int millis)
@@ -388,6 +388,7 @@ namespace AvionicsTest3
         }
         private void serialConnectButton_Click(object sender, EventArgs e)
         {
+            Console.WriteLine("Connecting to serial port");
             if (!serialPort.IsOpen)
             {
                 try
@@ -411,6 +412,10 @@ namespace AvionicsTest3
             {
                 serialConnectButton.BackColor = Color.Green;
                 serialDisconnectButton.BackColor = Color.Green;
+                //wait for the beginning of the next message, then continue
+                while((char)serialPort.ReadChar() != '~') {
+                    Console.WriteLine("Waiting for beginning of next message...");
+                }
             }
         }
         private void serialDisconnectButton_Click(object sender, EventArgs e)
@@ -500,24 +505,28 @@ namespace AvionicsTest3
                 }
         }
         private void readDataFromSerial() {
+            
             if (serialPort.IsOpen)
             {
+                long startTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                 while (serialPort.BytesToRead > 0) {
-                    serialReadSave += (char)serialPort.ReadChar();
-                }
-
-                while (serialReadSave.IndexOf('~') > -1 && serialReadSave.IndexOf(']') > -1)//if there is a message in the buffer
-                {// while loop so we can parse multiple messages in one function call
+                    long endTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                    if (endTime - startTime > 100) { break; }// 100ms timeout
+                    serialReadSave = serialPort.ReadLine();
                     // check checksum
                     int msgStart = serialReadSave.IndexOf('~');
                     int numStart = serialReadSave.IndexOf('[');
                     int msgEnd = serialReadSave.IndexOf(']');
                     string msg = serialReadSave.Substring(msgStart + 1, numStart - msgStart - 1);
                     int msgTotal = Int16.Parse(serialReadSave.Substring(numStart + 1, msgEnd - numStart - 1));
+                    //TODO: Break/continue if error in message lineup (probably only an issue for first few messages)
+
                     int calculatedTotal = 0;
+                    bankApLabel.Text = msg;
+                    
                     for (int i = 0; i < msg.Length; i++)
                     {
-                        calculatedTotal = (byte)msg[i];
+                        calculatedTotal += (byte)msg[i];
                     }
                     if (calculatedTotal == msgTotal)
                     {
@@ -525,6 +534,7 @@ namespace AvionicsTest3
                         // this isn't a switch statement only because individual items in a switch statement can't be collapsed
                         if (msg[0] == 'D')//Data from plane
                         {
+                            Console.WriteLine("first letter is D");
                             switch (msg[1])
                             {
                                 case 'S':// speed
@@ -534,13 +544,15 @@ namespace AvionicsTest3
                                     switch (msg[2])
                                     {   // NOTE - since we don't get lat/lng in at the same time, we can't map the plane's position very accuratly
                                         // I am thinking about a way to fix this but for now it'll just have to be like that.
-                                        case 'x'://roll (subject to change) TODO: check this
-                                            attitudeInsturmentRollSave = Int16.Parse(msg.Substring(3));
-                                            attitudeInsturmentSet(attitudeInsturmentRollSave, attitudeInsturmentPitchSave);
+                                        case 'x'://yaw (subject to change)
+                                            attitudeInsturmentRollSave = (int)float.Parse(msg.Substring(3));//start on char 4
+                                            attitudeInsturmentSet(attitudeInsturmentPitchSave, attitudeInsturmentRollSave);
                                             break;
-                                        case 'y'://pitch (subject to change) TODO: check this
-                                            attitudeInsturmentPitchSave = Int16.Parse(msg.Substring(3));
-                                            attitudeInsturmentSet(attitudeInsturmentRollSave, attitudeInsturmentPitchSave);
+                                        case 'y'://pitch (subject to change)
+                                            Console.WriteLine("Message: " + msg);
+                                            attitudeInsturmentPitchSave = (int)float.Parse(msg.Substring(3));
+                                            attitudeInsturmentSet(attitudeInsturmentPitchSave, attitudeInsturmentRollSave);
+                                            headingApLabel.Text = "test";
                                             break;
                                         case 'z':
                                             //writeToFile
@@ -594,7 +606,8 @@ namespace AvionicsTest3
                         writeToFile(msg, "incorrectData.txt");
                         // TODO: light up indicator for incorrect checksum
                     }
-                    serialReadSave = serialReadSave.Substring(msgEnd + 1);//cut the message from the buffer
+                    
+                    serialReadSave = serialReadSave.Substring(msgEnd);//cut the message from the buffer
                 }
             }
             
