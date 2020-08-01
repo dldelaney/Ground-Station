@@ -28,9 +28,9 @@ namespace AvionicsTest3
         bool[] joystickButtons = new bool[12];
         float[] joystickAxis = new float[3];// a percentage between 0 and 1 related to how much the joystick has moved in that axis
         string serialReadSave = "";
+        int recentAckMessage = -1;
         int attitudeInsturmentRollSave = 0;
         int attitudeInsturmentPitchSave = 0;
-        int recentAckMessage = -1;
         const int generalBufferSize = 10;
         const int insturmentSideBufferSize = 5;
         const int insturmentTopBufferSize = 5;
@@ -66,7 +66,7 @@ namespace AvionicsTest3
         }
         private void loopDeLoop(object sender, EventArgs e) {
             
-            //updateJoystickValues();
+            updateJoystickValues();
             //compileSerialDataToSend();
             readDataFromSerial();
         }
@@ -412,10 +412,11 @@ namespace AvionicsTest3
             {
                 serialConnectButton.BackColor = Color.Green;
                 serialDisconnectButton.BackColor = Color.Green;
-                //wait for the beginning of the next message, then continue
-                while((char)serialPort.ReadChar() != '~') {
-                    Console.WriteLine("Waiting for beginning of next message...");
-                }
+                //wait for the end of message, then continue (so the next char will be a '~'
+                //while((char)serialPort.ReadChar() != ']') {
+                //    Console.WriteLine("Waiting for end of message...");
+                //}
+                //Console.WriteLine("Found end of message:");
             }
         }
         private void serialDisconnectButton_Click(object sender, EventArgs e)
@@ -442,6 +443,7 @@ namespace AvionicsTest3
             {
                 serialSelectDropdown.Items.Add(port.ToString());
             }
+            serialPort.BaudRate = 115200;
         }
         private void updateJoystickValues() {
             if (joystickExists)
@@ -454,12 +456,16 @@ namespace AvionicsTest3
                     joystickAxis[0] = state.X / (float)joystickMaxValue;
                     joystickAxis[1] = state.Y / (float)joystickMaxValue;
                     joystickAxis[2] = (joystickMaxValue - state.Z) / (float)joystickMaxValue;
-
+                    
                     //label1.Text = "";
                     //print a percentage of how "pushed" the joystick is
                     //label1.Text += "Right: " + joystickAxis[0] + "\n";
                     //label1.Text += "Down:" + joystickAxis[1] + "\n";
                     //label1.Text += "Throttle: " + joystickAxis[2] + "\n";
+                    string joystickStr = "DJX";
+                    joystickStr += (joystickAxis[0].ToString());
+                    pitchApLabel.Text = joystickStr;
+                    checksumAndSendToSerial(joystickStr);
 
                     for (int i = 0; i < joystickButtons.Length; i++)
                     {
@@ -511,19 +517,33 @@ namespace AvionicsTest3
                 long startTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                 while (serialPort.BytesToRead > 0) {
                     long endTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-                    if (endTime - startTime > 100) { break; }// 100ms timeout
+                    //if (endTime - startTime > 5) { break; }// timeout in milliseconds
                     serialReadSave = serialPort.ReadLine();
+                    writeToFile(serialReadSave, "allData.txt");
+                    Console.WriteLine(serialReadSave);
+
+
                     // check checksum
                     int msgStart = serialReadSave.IndexOf('~');
+                    if(msgStart == -1) { continue; }
+                    serialReadSave = serialReadSave.Substring(msgStart);//chop it at the beginning of the message (to prevent numStart being less than msgStart)
+                    msgStart = serialReadSave.IndexOf('~');
                     int numStart = serialReadSave.IndexOf('[');
                     int msgEnd = serialReadSave.IndexOf(']');
+                    if(numStart == -1 || msgEnd == -1 || msgStart == -1) { continue; }//if error with the message, read next message
                     string msg = serialReadSave.Substring(msgStart + 1, numStart - msgStart - 1);
-                    int msgTotal = Int16.Parse(serialReadSave.Substring(numStart + 1, msgEnd - numStart - 1));
+                    short msgOutTemp;
+                    if(!Int16.TryParse(serialReadSave.Substring(numStart + 1, msgEnd - numStart - 1), out msgOutTemp))
+                    {
+                        writeToFile(serialReadSave.Substring(numStart + 1, msgEnd - numStart - 1), "incorrectMessages.txt");
+                    }
+                    int msgTotal = msgOutTemp;
                     //TODO: Break/continue if error in message lineup (probably only an issue for first few messages)
-
                     int calculatedTotal = 0;
                     bankApLabel.Text = msg;
                     
+
+
                     for (int i = 0; i < msg.Length; i++)
                     {
                         calculatedTotal += (byte)msg[i];
@@ -538,25 +558,23 @@ namespace AvionicsTest3
                             switch (msg[1])
                             {
                                 case 'S':// speed
-                                    airspeedInsturmentSet(Int16.Parse(msg.Substring(2)));// TODO: when updated insturment pictures, parse to float, multiply by factor, cast to int
+                                    airspeedInsturmentSet((int)float.Parse(msg.Substring(2)));
                                     break;
                                 case 'G':// gyro
                                     switch (msg[2])
                                     {   // NOTE - since we don't get lat/lng in at the same time, we can't map the plane's position very accuratly
                                         // I am thinking about a way to fix this but for now it'll just have to be like that.
                                         case 'x'://yaw (subject to change)
-                                            attitudeInsturmentRollSave = (int)float.Parse(msg.Substring(3));//start on char 4
-                                            attitudeInsturmentSet(attitudeInsturmentPitchSave, attitudeInsturmentRollSave);
+                                            writeToFile(msg.Substring(3), "YawSave.txt");
                                             break;
                                         case 'y'://pitch (subject to change)
-                                            Console.WriteLine("Message: " + msg);
                                             attitudeInsturmentPitchSave = (int)float.Parse(msg.Substring(3));
                                             attitudeInsturmentSet(attitudeInsturmentPitchSave, attitudeInsturmentRollSave);
                                             headingApLabel.Text = "test";
                                             break;
-                                        case 'z':
-                                            //writeToFile
-                                            writeToFile(msg.Substring(3), "YawSave.txt");
+                                        case 'z':// roll (subject to change)
+                                            attitudeInsturmentRollSave = (int)float.Parse(msg.Substring(3));//start on char 4
+                                            attitudeInsturmentSet(attitudeInsturmentPitchSave, attitudeInsturmentRollSave);
                                             break;
                                         default:// if it doesn't fit, sent it to a file for later review
                                             writeToFile(msg, "UnparsableGyro.txt");
@@ -606,7 +624,6 @@ namespace AvionicsTest3
                         writeToFile(msg, "incorrectData.txt");
                         // TODO: light up indicator for incorrect checksum
                     }
-                    
                     serialReadSave = serialReadSave.Substring(msgEnd);//cut the message from the buffer
                 }
             }
@@ -628,17 +645,18 @@ namespace AvionicsTest3
             for(int i = 0; i < msg.Length; i++) {
                 total += (byte)msg[i];
             }
-            msg += "[";
-            msg += total.ToString();
-            msg += "]";
-            for(int i = msg.Length; i < 30; i++)
+            str += "[";
+            str += total.ToString();
+            str += "]";
+            for(int i = str.Length; i < 29; i++)
             {
                 //add ']'s until at 30 chars
-                msg += "]";
+                str += "]";
             }
             if (serialPort.IsOpen)
             {
-                serialPort.Write(msg);
+                serialPort.Write(str);
+                Console.WriteLine("Sending: " + str);
             }
         }
         private void writeToFile(string msg, string filename) {
@@ -715,7 +733,8 @@ namespace AvionicsTest3
         }
         private void airspeedInsturmentSet(int airspeed)// not needed, but I didn't want to make functions for just two displays, that would be inconsistant
         {
-            airSpeedIndicatorInstrumentControl1.SetAirSpeedIndicatorParameters(airspeed);
+            float multiplier = 800 / 40;
+            airSpeedIndicatorInstrumentControl1.SetAirSpeedIndicatorParameters((int)(airspeed * multiplier));
         }
         private void headingInsturmentSet(int heading)// not needed, but I didn't want to make functions for just two displays, that would be inconsistant
         {

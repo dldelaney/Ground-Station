@@ -1,4 +1,4 @@
-﻿UPDATED 7-24-20 2100
+﻿UPDATED 7-31-20 1725
 
 checksum around each individual command (no more than 1 command in a message)
 checksum example ->  ~msg[num]
@@ -43,13 +43,16 @@ DATA FROM PLANE
 D - data (see second char)
 	S - speed
 	G - gyro (see third char)
-		x, y, z
+		X, Y, Z
 	L - location (lat/lng) (see third char)
-		a - lat
-		n - lng
+		A - lat
+		N - lng
 	A - altitude
 	H - heading
 	V - vertical speed
+	J - joystick (only for outgoing messages) (see next char)
+		X,Y,T - (x, y, throttle axis) <- has to be uppercase or else I get problems with the computer thinking JDx0 is a byte location rather than a string
+		B - button
 A - ack message
 	-do not send next command until get ack message from previous command
 	-(change color of command buttons to "command sent but ack not recieved" color)
