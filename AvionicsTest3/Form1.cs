@@ -58,17 +58,20 @@ namespace AvionicsTest3
             initSerialPorts();
             loadLastPIDs();
 
-
             Timer timer = new Timer();
             timer.Interval = (10); // 10ms
             timer.Tick += new EventHandler(loopDeLoop);
             timer.Start();
         }
         private void loopDeLoop(object sender, EventArgs e) {
-            
-            updateJoystickValues();
+
+            //TODO: fix send/recieve serial data trees in code
+            //updateJoystickValues();
             //compileSerialDataToSend();
-            readDataFromSerial();
+            //readDataFromSerial();
+            if (!serialPort.IsOpen) { serialPort.PortName = "COM3"; serialPort.BaudRate = 115200; serialPort.Open(); }
+            checksumAndSendToSerial("d");
+            Task.Delay(1000).Wait();
         }
         public void delay(int millis)
         {
@@ -412,11 +415,8 @@ namespace AvionicsTest3
             {
                 serialConnectButton.BackColor = Color.Green;
                 serialDisconnectButton.BackColor = Color.Green;
-                //wait for the end of message, then continue (so the next char will be a '~'
-                //while((char)serialPort.ReadChar() != ']') {
-                //    Console.WriteLine("Waiting for end of message...");
-                //}
-                //Console.WriteLine("Found end of message:");
+                //clear the input buffer (so we only read messages that have come after the button has been clicked)
+                serialPort.DiscardInBuffer();
             }
         }
         private void serialDisconnectButton_Click(object sender, EventArgs e)
@@ -457,15 +457,9 @@ namespace AvionicsTest3
                     joystickAxis[1] = state.Y / (float)joystickMaxValue;
                     joystickAxis[2] = (joystickMaxValue - state.Z) / (float)joystickMaxValue;
                     
-                    //label1.Text = "";
-                    //print a percentage of how "pushed" the joystick is
-                    //label1.Text += "Right: " + joystickAxis[0] + "\n";
-                    //label1.Text += "Down:" + joystickAxis[1] + "\n";
-                    //label1.Text += "Throttle: " + joystickAxis[2] + "\n";
                     string joystickStr = "DJX";
-                    joystickStr += (joystickAxis[0].ToString());
-                    pitchApLabel.Text = joystickStr;
-                    checksumAndSendToSerial(joystickStr);
+                    joystickStr += (joystickAxis[0].ToString().Substring(0,4));//cut the message off at 4 characters in (0.000)
+                    //checksumAndSendToSerial(joystickStr);
 
                     for (int i = 0; i < joystickButtons.Length; i++)
                     {
@@ -653,11 +647,13 @@ namespace AvionicsTest3
                 //add ']'s until at 30 chars
                 str += "]";
             }
+            str = "~DJx54.1234[123]";
             if (serialPort.IsOpen)
             {
                 serialPort.Write(str);
                 Console.WriteLine("Sending: " + str);
             }
+
         }
         private void writeToFile(string msg, string filename) {
             using (StreamWriter file = new StreamWriter(filename, true))

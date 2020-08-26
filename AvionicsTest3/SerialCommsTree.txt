@@ -1,8 +1,10 @@
-﻿UPDATED 7-31-20 1725
+﻿UPDATED 8-26-20
 
-checksum around each individual command (no more than 1 command in a message)
-checksum example ->  ~msg[num]
-where num is the sum of all the ACII values of the chars in the message
+taken out checksum for faster data transfer,
+all messages will now begin with C or D, based on their contents
+(Tree modified so no C's of D's exist other than start characters)
+
+//removed ack message as it isn't required with the new "shared packet" system
 
 DATA TO PLANE
 first char of message:
@@ -53,9 +55,6 @@ D - data (see second char)
 	J - joystick (only for outgoing messages) (see next char)
 		X,Y,T - (x, y, throttle axis) <- has to be uppercase or else I get problems with the computer thinking JDx0 is a byte location rather than a string
 		B - button
-A - ack message
-	-do not send next command until get ack message from previous command
-	-(change color of command buttons to "command sent but ack not recieved" color)
 
 ---the rest of the command will be a single number---
 
